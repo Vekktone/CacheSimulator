@@ -1,1 +1,4 @@
 Mem trace line 1
+https://course.ccs.neu.edu/com3200/parent/NOTES/cache-basics.html
+https://stackoverflow.com/questions/24163566/set-associative-cache-calculate-size-of-tag
+https://cseweb.ucsd.edu/classes/sp13/cse141-a/Slides/10_Caches_detail.pdf
