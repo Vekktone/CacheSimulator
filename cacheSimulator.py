@@ -1,5 +1,7 @@
 import sys, math
 
+cacheSim=[]
+
 def createCache(cacheSize, cacheLineSize, numWays):
     
     #need to determine if cacheSize is in MB, KB, or B, for now
@@ -26,7 +28,6 @@ def createCache(cacheSize, cacheLineSize, numWays):
     print("Set index is t bits based on number of sets: t =", setIndex)
     print("Tag has remaining bits: tag =", tag)
     #create cache array and fill with all zeros
-    cacheSim=[]
     for i in range(numCacheLines):
         cacheSim.append([0,0,0,0,0])
 
