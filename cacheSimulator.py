@@ -1,4 +1,7 @@
 import sys, math
+from collections import deque
+
+queue = [None] * numWays
 
 def createCache(cacheSize, cacheLineSize, numWays):
     
@@ -50,6 +53,10 @@ def createCache(cacheSize, cacheLineSize, numWays):
         print("cachSim[", i, "]: ", cacheSim[i])
 
 
+def LRUQueue(tag):
+    if tag not in queue:
+        queue[0] = tag
+        queue.rotate(-1)
 
 
 #Main method
