@@ -1,4 +1,4 @@
-import sys
+import sys, math
 
 def createCache(cacheSize, cacheLineSize, numWays):
     
@@ -15,7 +15,16 @@ def createCache(cacheSize, cacheLineSize, numWays):
     print("numSets: ", numSets)
     print("numWays: ", numWays)
     print("The cache consists of ", numSets, " sets each consisting of numCacheLines/numSets: ", cacheLinesPerSet, " cache Lines.")
-    
+    print()
+    print("The memory address is partitioned into 3 parts: tag, set index, and offset")
+
+    memAddressSize = 10
+    offset = math.log(cacheLineSize, 2)
+    setIndex = math.log(numSets, 2)
+    tag = memAddressSize - (offset + setIndex)
+    print("Offset is s bits based on cache line size: s =", offset)
+    print("Set index is t bits based on number of sets: t =", setIndex)
+    print("Tag has remaining bits: tag =", tag)
     #create cache array and fill with all zeros
     cacheSim=[]
     for i in range(numCacheLines):
@@ -43,13 +52,17 @@ def createCache(cacheSize, cacheLineSize, numWays):
 
 
 
-file = open(sys.argv[1], "r")
-while True:
-    inputline = file.readline()
-    if inputline == "":
-        break
-    print(inputline)
-
+#Main method
 print("This is a cache simulator")
 
-createCache(256, 64, 2)
+#createCache(256, 64, 2)
+#createCache(4096, 128, 4)
+createCache((1*1024), 64, 16)
+file = open(sys.argv[1], "r")
+while True:
+    inputLine = file.readline()
+    if inputLine == "":
+        break
+
+    memFields = inputLine.split()
+    print("Memory address is", memFields[2])
