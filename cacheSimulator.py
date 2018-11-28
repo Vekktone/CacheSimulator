@@ -85,12 +85,15 @@ print()
 accessCount = 0
 missCount = 0
 addrCount = 0;
-
 file = open(sys.argv[1], "r")
 while True:
     inputLine = file.readline()
+    #check if we need to read or write to cache if line is populated 
     if inputLine == "":
         break
+    rw = inputLine.split()
+    ReadWrite = rw[1]
+    # to get R or W
     accessCount = accessCount + 1
     addrCount = addrCount + 1
 
@@ -122,50 +125,90 @@ while True:
 
     hitFlag = 0
     fullSetCounter = 0;
-    
-    #check if cache miss or hit
-    for i in range(numCacheLines):
-        if (cacheSim[i][0] == int(memSetIndex)):
-            if (cacheSim[i][2] == memTag and cacheSim[i][4] == cacheLineStart):
-                print("CACHE HIT!")
-                hitFlag = 1
-                break
-            if (cacheSim[i][2] != memTag and cacheSim[i][4] != cacheLineStart and cacheSim[i][2] != "-1" and cacheSim[i][4] != "-1"):
-                fullSetCounter = fullSetCounter + 1
-                if (fullSetCounter == cacheLinesPerSet):
-                    hitFlag = 2
-                    break
-
-    if (hitFlag == 0):
-        print("Cache miss with empty slots in set. Need to insert.")
-        missCount = missCount + 1
-        for i in range(numCacheLines):
-            if (cacheSim[i][2] == "-1" and cacheSim[i][4] == "-1"):
-                break
-        cacheSim[i][2] = memTag
-        cacheSim[i][4] = cacheLineStart
-        cacheSim[i][3] = 1
-        cacheSim[i][5] = time.time()
-        #printCache(cacheSim)
-    if (hitFlag == 2):
-        print("Cache miss with full slots in set. Must replace using LRU.")
-        missCount = missCount + 1
-        oldestTime = 10000000000000000
-        oldestRow = -1
+    if(ReadWrite == "R"):
+        #check if cache miss or hit
         for i in range(numCacheLines):
             if (cacheSim[i][0] == int(memSetIndex)):
-                if (cacheSim[i][5] < oldestTime):
-                    oldestTime = cacheSim[i][5]
-                    oldestRow = i
-        print("I will replace row", oldestRow, "since it was least recently used")
-        cacheSim[oldestRow][2] = memTag
-        cacheSim[oldestRow][4] = cacheLineStart
-        cacheSim[oldestRow][3] = 1
-        cacheSim[oldestRow][5] = time.time()
+                if (cacheSim[i][2] == memTag and cacheSim[i][4] == cacheLineStart):
+                    print("CACHE HIT!")
+                    hitFlag = 1
+                    break
+                if (cacheSim[i][2] != memTag and cacheSim[i][4] != cacheLineStart and cacheSim[i][2] != "-1" and cacheSim[i][4] != "-1"):
+                    fullSetCounter = fullSetCounter + 1
+                    if (fullSetCounter == cacheLinesPerSet):
+                        hitFlag = 2
+                        break
+
+        if (hitFlag == 0):
+            print("Cache miss with empty slots in set. Need to insert.")
+            missCount = missCount + 1
+            for i in range(numCacheLines):
+                if (cacheSim[i][2] == "-1" and cacheSim[i][4] == "-1"):
+                    break
+            cacheSim[i][2] = memTag
+            cacheSim[i][4] = cacheLineStart
+            cacheSim[i][3] = 1
+            cacheSim[i][5] = time.time()
+            #printCache(cacheSim)
+        if (hitFlag == 2):
+            print("Cache miss with full slots in set. Must replace using LRU.")
+            missCount = missCount + 1
+            oldestTime = 10000000000000000
+            oldestRow = -1
+            for i in range(numCacheLines):
+                if (cacheSim[i][0] == int(memSetIndex)):
+                    if (cacheSim[i][5] < oldestTime):
+                        oldestTime = cacheSim[i][5]
+                        oldestRow = i
+            print("I will replace row", oldestRow, "since it was least recently used")
+            cacheSim[oldestRow][2] = memTag
+            cacheSim[oldestRow][4] = cacheLineStart
+            cacheSim[oldestRow][3] = 1
+            cacheSim[oldestRow][5] = time.time()
         #printCache(cacheSim)
 
-    print()
+        print()
 
-    missRate = (missCount/accessCount) * 100
+        missRate = (missCount/accessCount) * 100
+
+    if(ReadWrite == "W"): #copied funcs from read for check hit and miss
+        BlockSize = 2^offset
+        for i in range(numCacheLines):
+            if (cacheSim[i][0] == int(memSetIndex)):
+                if (cacheSim[i][2] == memTag and cacheSim[i][4] == cacheLineStart):
+                    print("CACHE HIT!")
+                    hitFlag = 1
+                    break
+                    if (cacheSim[i][2] != memTag and cacheSim[i][4] != cacheLineStart and cacheSim[i][2] != "-1" and cacheSim[i][4] != "-1"):
+                        fullSetCounter = fullSetCounter + 1
+                        if (fullSetCounter == cacheLinesPerSet):
+                            hitFlag = 2
+                            break
+        if (hitFlag == 0):
+            missCount = missCount +1
+            print("Cache miss with empty slots in set. Need to insert.")
+            for i in range(numCacheLines):
+                if (cacheSim[i][2] == "-1" and cacheSim[i][4] == "-1"): #if nothing here fill spot
+                    cacheSim[i][2] = memTag
+                    cacheSim[i][4] = cacheLineStart
+                    cacheSim[i][3] = 1
+                    cacheSim[i][5] = time.time()
+            
+        
+                              #printCache(cacheSim)
+        if (hitFlag == 2):
+            print("Cache miss with full slots in set. Must replace using LRU.")
+            for i in range(numCacheLines):
+                if (cacheSim[i][0] == int(memSetIndex)):
+                    if (cacheSim[i][5] < oldestTime):
+                        oldestTime = cacheSim[i][5]
+                        oldestRow = i
+                        print("I will replace row", oldestRow, "since it was least recently used")
+                                              #printCache(cacheSim)
+                 
+        print()
+                
+        missRate = (missCount/accessCount) * 100
+        
 
 print("The miss rate is", missRate, "%")
