@@ -76,13 +76,16 @@ def createCache(cacheSize, cacheLineSize, numWays):
 print("This is a cache simulator")
 
 
-
+cacheSize = int(sys.argv[2])
+cacheLineSize = int(sys.argv[3])
+numWays = int(sys.argv[4])
 #createCache(256, cacheLineSize, 2)
-#createCache(4096, 128, 4)
+#createCache((256*1024), cacheLineSize, 16)
 #createCache((1*1024), cacheLineSize, 16)
 #createCache((4*1024*1024), cacheLineSize, 16)
-createCache((4*1024*1024), cacheLineSize, 16)
+#createCache((32*1024), cacheLineSize, 16)
 
+createCache(cacheSize, cacheLineSize, numWays)
 printCache(cacheSim)
 
 print()
@@ -93,38 +96,26 @@ file = open(sys.argv[1], "r")
 while True:
     inputLine = file.readline()
     #check if we need to read or write to cache if line is populated 
-    if inputLine == "":
+    if inputLine == "" or inputLine == "#eof":
         break
     
+    #calculate specific metric for each address, save into variables
+    memFields = inputLine.split()
+    if (len(memFields) != 3):
+        continue
+
     accessCount = accessCount + 1
     addrCount = addrCount + 1
 
-    #calculate specific metric for each address, save into variables
-    memFields = inputLine.split()
     print()
     print("addrCount =", addrCount)
-    #print("Memory address is", memFields[2])
-    #integer = int(memFields[2], 16)
-    #print("Mem addr as int is", integer)
-    #bin_rep = format(integer, '0>12b')
-    #if (setIndex != 0):
-        #memOffset = bin_rep[(offset * -1):]
-        #cacheLineStart = hex(integer-int(bin_rep[(offset * -1):], 2))
-        #memSetIndex = bin_rep[((offset * -1) - 1): (offset * -1)]
-        #memTag = hex(int(bin_rep[0:tag], 2))
-    #else:
-        #memOffset = bin_rep[(offset * -1):]
-        #cacheLineStart = hex(integer-int(bin_rep[(offset * -1):], 2))
-        #memSetIndex = 0
-        #memTag = hex(int(bin_rep[0:tag + 1], 2))
+
     addr = int(memFields[2], 16)
     print("addr is", addr)
     memOffet = addr & (cacheLineSize - 1)
     memSetIndex = addr >> math.ceil(math.log(cacheLineSize, 2)) & (numSets - 1)
     memTag = addr >> (math.ceil(math.log(numSets, 2)) + math.ceil(math.log(cacheLineSize, 2)))
-    #memSetIndex = 0
-    #print("Binary is", bin_rep)
-    #print("Offset is", offset)
+    #print("Offset is", memOffset)
     #print("Cache line starts at", cacheLineStart)
     #print("Set index is", memSetIndex)
     #print("Tag is", memTag)
@@ -142,43 +133,79 @@ while True:
                     print("CACHE HIT!")
                     hitFlag = 1
                     break
-                if (cacheSim[i][2] != memTag and cacheSim[i][2] != "-1" and cacheSim[i][4] != "-1"):
-                    fullSetCounter = fullSetCounter + 1
-                    if (fullSetCounter == cacheLinesPerSet):
-                        hitFlag = 2
-                        break
+
+        fullFlag = 1
+        oldestTime = 1000000000000000000000000
+        oldestRow = -1
 
         if (hitFlag == 0):
-            #print("Cache miss with empty slots in set. Need to insert.")
+            print("Cache miss. Need to insert.")
             missCount = missCount + 1
-            for i in range(startingRow, startingRow+cacheLinesPerSet):
-                if (cacheSim[i][2] == "-1" and cacheSim[i][4] == "-1"):
+            for i in range(startingRow, startingRow + cacheLinesPerSet):
+                if (cacheSim[i][3] == 0): #valid bit 0, this is an empty slot
+                    fullFlag = 0
                     break
-            cacheSim[i][2] = memTag
-            cacheSim[i][4] = "data"
-            cacheSim[i][3] = 1
-            cacheSim[i][5] = time.time()
+                if (cacheSim[i][5] < oldestTime):
+                    oldestTime = cacheSim[i][5]
+                    oldestRow = i
+            if (fullFlag == 0):
+                print("Cache set has empty slots. Inserting...")
+                cacheSim[i][2] = memTag
+                cacheSim[i][4] = "data"
+                cacheSim[i][3] = 1
+                cacheSim[i][5] = time.time()
+            else:
+                print("Cache set full, replacing using LRU.")
+                cacheSim[oldestRow][2] = memTag
+                cacheSim[oldestRow][4] = "data"
+                cacheSim[oldestRow][3] = 1
+                cacheSim[oldestRow][5] = time.time()
+	
             #printCache(cacheSim)
             #print()
-        if (hitFlag == 2):
-            #print("Cache miss with full slots in set. Must replace using LRU.")
-            missCount = missCount + 1
-            oldestTime = 10000000000000000
-            oldestRow = -1
-            for i in range(startingRow, startingRow+cacheLinesPerSet):
-                if (cacheSim[i][0] == int(memSetIndex)):
-                    if (cacheSim[i][5] < oldestTime):
-                        oldestTime = cacheSim[i][5]
-                        oldestRow = i
-            #print("I will replace row", oldestRow, "since it was least recently used")
-            cacheSim[oldestRow][2] = memTag
-            cacheSim[oldestRow][4] = "data"
-            cacheSim[oldestRow][3] = 1
-            cacheSim[oldestRow][5] = time.time()
-        #printCache(cacheSim)
-        #print()
+    if(memFields[1] == "W"):
+        print("Write detected. Using Write back policy.")
+        startingRow = cacheLinesPerSet * int(memSetIndex)
+        for i in range(startingRow, startingRow + cacheLinesPerSet):
+            if (cacheSim[i][0] == int(memSetIndex)):
+                if (cacheSim[i][2] == memTag):
+                    print("CACHE WRITE HIT! Updating...")
+                    cacheSim[i][2] = memTag
+                    cacheSim[i][4] = "dataUpdated"
+                    cacheSim[i][3] = 1
+                    cacheSim[i][5] = time.time()
+                    hitFlag = 1
+                    break
 
+        fullFlag = 1
+        oldestTime = 1000000000000000000000000
+        oldestRow = -1
+
+        if (hitFlag == 0):
+            print("Cache write miss. Need to insert.")
+            missCount = missCount + 1
+            for i in range(startingRow, startingRow + cacheLinesPerSet):
+                if (cacheSim[i][3] == 0): #valid bit 0, this is an empty slot
+                    fullFlag = 0
+                    break
+                if (cacheSim[i][5] < oldestTime):
+                    oldestTime = cacheSim[i][5]
+                    oldestRow = i
+            if (fullFlag == 0):
+                print("Cache set has empty slots. Inserting...")
+                cacheSim[i][2] = memTag
+                cacheSim[i][4] = "data"
+                cacheSim[i][3] = 1
+                cacheSim[i][5] = time.time()
+            else:
+                print("Cache set full, replacing using LRU.")
+                cacheSim[oldestRow][2] = memTag
+                cacheSim[oldestRow][4] = "data"
+                cacheSim[oldestRow][3] = 1
+                cacheSim[oldestRow][5] = time.time()
+	
 missRate = (missCount/accessCount) * 100
         
-
+print("Access count is", accessCount)
+print("Miss count is", missCount)
 print("The miss rate is", missRate, "%")
