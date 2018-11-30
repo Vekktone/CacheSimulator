@@ -1,5 +1,4 @@
 import sys, math, time
-from cache import createCache, printCache
 import cache
 
 #Main method
@@ -10,7 +9,7 @@ cacheLineSize = int(sys.argv[3])
 numWays = int(sys.argv[4])
 
 #create cache data structure
-createCache(cacheSize, cacheLineSize, numWays)
+cache.createCache(cacheSize, cacheLineSize, numWays)
 
 #initialize variables for computations
 cacheSim = cache.cacheSim
