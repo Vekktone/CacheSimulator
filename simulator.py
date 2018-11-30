@@ -64,7 +64,7 @@ while True:
                 break
 
         fullFlag = 1
-        oldestTime = 1000000000000000000000000  #use a large time value by default for LRU comparison
+        oldestTime = -1  #use a large time value by default for LRU comparison
         oldestRow = -1
 
         if (hitFlag == 0):
@@ -74,7 +74,7 @@ while True:
                 if (cacheSim[i][3] == 0): #valid bit 0, this is an empty slot
                     fullFlag = 0
                     break
-                if (cacheSim[i][5] < oldestTime):
+                if (cacheSim[i][5] > oldestTime):
                     oldestTime = cacheSim[i][5]
                     oldestRow = i
             if (fullFlag == 0):
@@ -104,7 +104,7 @@ while True:
                 break
 
         fullFlag = 1
-        oldestTime = 1000000000000000000000000
+        oldestTime = -1
         oldestRow = -1
 
         if (hitFlag == 0):
@@ -114,7 +114,7 @@ while True:
                 if (cacheSim[i][3] == 0): #valid bit 0, this is an empty slot
                     fullFlag = 0
                     break
-                if (cacheSim[i][5] < oldestTime):
+                if (cacheSim[i][5] > oldestTime):
                     oldestTime = cacheSim[i][5]
                     oldestRow = i
             if (fullFlag == 0):
