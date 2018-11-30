@@ -1,59 +1,59 @@
 riley@riley-HP-ENVY-17-Notebook-PC:~/Desktop/comp-sci/cs/arch/CacheSimulator$ time sh run_sim.sh 1KB_64B
-Cahe miss rate: 50.00%
+Cache miss rate: 50.00%
 
 real	0m0.027s
 user	0m0.020s
 sys	0m0.004s
 riley@riley-HP-ENVY-17-Notebook-PC:~/Desktop/comp-sci/cs/arch/CacheSimulator$ time sh run_sim.sh 4MB_4B
-Cahe miss rate: 2.08%
+Cache miss rate: 2.08%
 
 real	0m14.084s
 user	0m14.048s
 sys	0m0.032s
 riley@riley-HP-ENVY-17-Notebook-PC:~/Desktop/comp-sci/cs/arch/CacheSimulator$ time sh run_sim.sh 32MB_4B
-Cahe miss rate: 6.25%
+Cache miss rate: 6.25%
 
 real	2m6.693s
 user	2m6.572s
 sys	0m0.124s
 riley@riley-HP-ENVY-17-Notebook-PC:~/Desktop/comp-sci/cs/arch/CacheSimulator$ time sh run_sim.sh bw_mem.traces.txt
-Cahe miss rate: 1.56%
+Cache miss rate: 1.56%
 
 real	0m4.083s
 user	0m4.068s
 sys	0m0.012s
 riley@riley-HP-ENVY-17-Notebook-PC:~/Desktop/comp-sci/cs/arch/CacheSimulator$ time sh run_sim.sh ls.trace.txt
-Cahe miss rate: 2.17%
+Cache miss rate: 2.17%
 
 real	0m1.202s
 user	0m1.172s
 sys	0m0.000s
 riley@riley-HP-ENVY-17-Notebook-PC:~/Desktop/comp-sci/cs/arch/CacheSimulator$ time sh run_sim.sh gcc.trace.txt
-Cahe miss rate: 1.89%
+Cache miss rate: 1.89%
 
 real	0m1.697s
 user	0m1.692s
 sys	0m0.000s
 riley@riley-HP-ENVY-17-Notebook-PC:~/Desktop/comp-sci/cs/arch/CacheSimulator$ time sh run_sim.sh naive_dgemm.trace.txt
-Cahe miss rate: 50.25%
+Cache miss rate: 50.25%
 
 real	0m6.745s
 user	0m6.736s
 sys	0m0.004s
 riley@riley-HP-ENVY-17-Notebook-PC:~/Desktop/comp-sci/cs/arch/CacheSimulator$ time sh run_sim.sh naive_dgemm_full.trace.txt
-Cahe miss rate: 49.37%
+Cache miss rate: 49.37%
 
 real	4m30.603s
 user	4m30.400s
 sys	0m0.208s
 riley@riley-HP-ENVY-17-Notebook-PC:~/Desktop/comp-sci/cs/arch/CacheSimulator$ time sh run_sim.sh openblas_dgemm.trace.txt
-Cahe miss rate: 8.30%
+Cache miss rate: 8.30%
 
 real	0m4.366s
 user	0m4.356s
 sys	0m0.004s
 riley@riley-HP-ENVY-17-Notebook-PC:~/Desktop/comp-sci/cs/arch/CacheSimulator$ time sh run_sim.sh openblas_dgemm_full.trace.txt
-Cahe miss rate: 7.50%
+Cache miss rate: 7.50%
 
 real	2m2.211s
 user	2m1.116s
