@@ -132,4 +132,4 @@ while True:
 missRate = (missCount/accessCount) * 100
 #print("Access count is", accessCount)
 #print("Miss count is", missCount)
-print ("Cahe miss rate: {:0.2f}%".format(missRate, 3))
+print ("Cache miss rate: {:0.2f}%".format(missRate, 3))
