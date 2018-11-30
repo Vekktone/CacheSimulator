@@ -12,6 +12,6 @@ files defined in the project requirements, the command is:
 
 sh run_sim.sh [memTraceFile]
 
-(2) If you are using a custom trace file with user defined parameters. the command is:
+(2) If you are using a custom trace file with user defined parameters, the command is:
 
 sh run_sim.sh [memTraceFile] [cacheSizeInBytes] [cacheLineSizeInBytes] [numberOfWays]
