@@ -4,6 +4,10 @@ import cache
 #Main method
 #print("This is a cache simulator")
 
+if (len(sys.argv) < 4):
+    print("Usage: sh run_sim.sh [memTraceFile] [cacheSizeInBytes] [cacheLineSizeInBytes] [numberOfWays]")
+    sys.exit()
+
 cacheSize = int(sys.argv[2])
 cacheLineSize = int(sys.argv[3])
 numWays = int(sys.argv[4])
